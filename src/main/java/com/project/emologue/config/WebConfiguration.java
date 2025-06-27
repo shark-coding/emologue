@@ -47,6 +47,10 @@ public class WebConfiguration {
                                 .requestMatchers(HttpMethod.POST,"/api/v1/jobs").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers(HttpMethod.PATCH, "/api/v1/jobs/**").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/jobs/**").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/emotions", "/api/v1/emotions/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/emotions").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/api/v1/emotions/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/emotions/**").permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .sessionManagement(
