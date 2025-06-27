@@ -17,6 +17,9 @@ public class JobEntity {
     @Column(nullable = false)
     private String jobname;
 
+    @Column(nullable = false)
+    private String description;
+
     public Long getJobId() {
         return jobId;
     }
@@ -33,22 +36,31 @@ public class JobEntity {
         this.jobname = jobname;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JobEntity jobEntity = (JobEntity) o;
-        return Objects.equals(jobId, jobEntity.jobId) && Objects.equals(jobname, jobEntity.jobname);
+        return Objects.equals(jobId, jobEntity.jobId) && Objects.equals(jobname, jobEntity.jobname) && Objects.equals(description, jobEntity.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(jobId, jobname);
+        return Objects.hash(jobId, jobname, description);
     }
 
-    public static JobEntity of(String jobname) {
+    public static JobEntity of(String jobname, String description) {
         JobEntity jobEntity = new JobEntity();
         jobEntity.setJobname(jobname);
+        jobEntity.setDescription(description);
         return jobEntity;
     }
 }

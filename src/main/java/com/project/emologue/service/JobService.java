@@ -31,7 +31,7 @@ public class JobService {
     }
 
     public Job createJob(JobRequestBody createJob) {
-        JobEntity jobEntity = JobEntity.of(createJob.jobname());
+        JobEntity jobEntity = JobEntity.of(createJob.jobname(), createJob.description());
         return Job.from(jobEntityRepository.save(jobEntity));
     }
 
@@ -39,6 +39,9 @@ public class JobService {
         JobEntity jobEntity = getJobEntityByJobId(jobId);
         if (!ObjectUtils.isEmpty(updateJob.jobname())) {
             jobEntity.setJobname(updateJob.jobname());
+        }
+        if (!ObjectUtils.isEmpty(updateJob.description())) {
+            jobEntity.setDescription(updateJob.description());
         }
         return Job.from(jobEntityRepository.save(jobEntity));
     }
