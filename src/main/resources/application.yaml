@@ -1,0 +1,6 @@
+spring:
+  security:
+    user.name: emologue-admin
+    user.password: emologue-admin-password
+  config:
+    import: optional:application-secret.yaml
