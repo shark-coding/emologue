@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "admin")
+@Table(name = "admin",
+        indexes = {
+        @Index(name = "admin_username_idx", columnList = "username", unique = true)})
 public class AdminEntity implements UserDetails {
 
     @Id
