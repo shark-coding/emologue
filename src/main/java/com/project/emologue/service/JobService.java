@@ -1,6 +1,8 @@
 package com.project.emologue.service;
 
+import com.project.emologue.exception.job.JobAlreadyExistsException;
 import com.project.emologue.exception.job.JobNotFoundException;
+import com.project.emologue.exception.user.UserAlreadyExistsException;
 import com.project.emologue.model.entity.JobEntity;
 import com.project.emologue.model.job.Job;
 import com.project.emologue.model.job.JobRequestBody;
@@ -25,18 +27,24 @@ public class JobService {
         return Job.from(jobEntity);
     }
 
-    public JobEntity getJobEntityByJobId(Long jobId) {
-        return jobEntityRepository.findById(jobId)
+    public JobEntity getJobEntityByJobId(long jobId) {
+        return jobEntityRepository.findByJobId(jobId)
                 .orElseThrow(() -> new JobNotFoundException(jobId));
     }
 
     public Job createJob(JobRequestBody createJob) {
-        JobEntity jobEntity = JobEntity.of(createJob.jobname(), createJob.description());
+        jobEntityRepository.findByJobname(createJob.jobname())
+                .ifPresent(
+                        jobs -> {
+                            throw new JobAlreadyExistsException();
+                        }
+                );
+        var jobEntity = JobEntity.of(createJob.jobname(), createJob.description());
         return Job.from(jobEntityRepository.save(jobEntity));
     }
 
     public Job updateJob(Long jobId, JobRequestBody updateJob) {
-        JobEntity jobEntity = getJobEntityByJobId(jobId);
+        var jobEntity = getJobEntityByJobId(jobId);
         if (!ObjectUtils.isEmpty(updateJob.jobname())) {
             jobEntity.setJobname(updateJob.jobname());
         }
@@ -47,7 +55,7 @@ public class JobService {
     }
 
     public void deleteJob(long jobId) {
-        JobEntity jobEntity = getJobEntityByJobId(jobId);
+        var jobEntity = getJobEntityByJobId(jobId);
         jobEntityRepository.delete(jobEntity);
     }
 }

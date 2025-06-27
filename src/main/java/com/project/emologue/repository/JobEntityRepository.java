@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface JobEntityRepository extends JpaRepository<JobEntity, Long> {
     Optional<JobEntity> findByJobname(String jobname);
+    Optional<JobEntity> findByJobId(Long jobId);
 }

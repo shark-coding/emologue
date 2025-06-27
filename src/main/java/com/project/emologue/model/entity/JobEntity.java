@@ -7,7 +7,9 @@ import org.hibernate.annotations.Where;
 import java.util.Objects;
 
 @Entity
-@Table(name = "jobs")
+@Table(name = "jobs",
+        indexes = {
+                @Index(name = "jobs_jobname_idx", columnList = "jobname", unique = true)})
 public class JobEntity {
 
     @Id
