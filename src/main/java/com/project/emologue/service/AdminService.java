@@ -10,7 +10,6 @@ import com.project.emologue.model.entity.AdminEntity;
 import com.project.emologue.repository.AdminEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,7 +41,6 @@ public class AdminService {
         return Admin.from(adminEntity);
 
     }
-
 
     public AdminAuthenticationResponse authenticate(AdminLoginRequestBody adminLoginRequestBody) {
         var adminEntity = getAdminEntityByUsername(adminLoginRequestBody.username());
