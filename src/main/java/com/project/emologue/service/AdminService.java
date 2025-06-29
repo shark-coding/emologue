@@ -55,6 +55,6 @@ public class AdminService {
 
     private AdminEntity getAdminEntityByUsername(String username) {
         return adminEntityRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+                .orElseThrow(() -> new AdminNotFoundException(username));
     }
 }
