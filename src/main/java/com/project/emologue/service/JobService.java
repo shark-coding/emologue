@@ -33,12 +33,9 @@ public class JobService {
     }
 
     public Job createJob(JobPostRequestBody createJob) {
-        jobEntityRepository.findByJobname(createJob.jobname())
-                .ifPresent(
-                        jobs -> {
-                            throw new JobAlreadyExistsException();
-                        }
-                );
+        if (jobEntityRepository.existsByJobname(createJob.jobname())) {
+            throw new JobAlreadyExistsException(createJob.jobname());
+        }
         var jobEntity = JobEntity.of(createJob.jobname(), createJob.description());
         return Job.from(jobEntityRepository.save(jobEntity));
     }
