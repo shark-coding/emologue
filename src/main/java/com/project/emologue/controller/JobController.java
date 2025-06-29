@@ -1,8 +1,8 @@
 package com.project.emologue.controller;
 
-import com.project.emologue.model.entity.JobEntity;
 import com.project.emologue.model.job.Job;
-import com.project.emologue.model.job.JobRequestBody;
+import com.project.emologue.model.job.JobPatchRequestBody;
+import com.project.emologue.model.job.JobPostRequestBody;
 import com.project.emologue.service.JobService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +30,13 @@ public class JobController {
     }
 
     @PostMapping
-    public ResponseEntity<Job> createJob(@Valid @RequestBody JobRequestBody createJob) {
+    public ResponseEntity<Job> createJob(@Valid @RequestBody JobPostRequestBody createJob) {
         Job job = jobService.createJob(createJob);
         return ResponseEntity.ok(job);
     }
 
     @PatchMapping("/{jobId}")
-    public ResponseEntity<Job> updateJob(@PathVariable long jobId, @Valid @RequestBody JobRequestBody updateJob) {
+    public ResponseEntity<Job> updateJob(@PathVariable long jobId, @Valid @RequestBody JobPatchRequestBody updateJob) {
         Job job = jobService.updateJob(jobId, updateJob);
         return ResponseEntity.ok(job);
     }

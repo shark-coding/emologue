@@ -2,10 +2,10 @@ package com.project.emologue.service;
 
 import com.project.emologue.exception.job.JobAlreadyExistsException;
 import com.project.emologue.exception.job.JobNotFoundException;
-import com.project.emologue.exception.user.UserAlreadyExistsException;
 import com.project.emologue.model.entity.JobEntity;
 import com.project.emologue.model.job.Job;
-import com.project.emologue.model.job.JobRequestBody;
+import com.project.emologue.model.job.JobPatchRequestBody;
+import com.project.emologue.model.job.JobPostRequestBody;
 import com.project.emologue.repository.JobEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class JobService {
                 .orElseThrow(() -> new JobNotFoundException(jobId));
     }
 
-    public Job createJob(JobRequestBody createJob) {
+    public Job createJob(JobPostRequestBody createJob) {
         jobEntityRepository.findByJobname(createJob.jobname())
                 .ifPresent(
                         jobs -> {
@@ -43,7 +43,7 @@ public class JobService {
         return Job.from(jobEntityRepository.save(jobEntity));
     }
 
-    public Job updateJob(Long jobId, JobRequestBody updateJob) {
+    public Job updateJob(Long jobId, JobPatchRequestBody updateJob) {
         var jobEntity = getJobEntityByJobId(jobId);
         if (!ObjectUtils.isEmpty(updateJob.jobname())) {
             jobEntity.setJobname(updateJob.jobname());

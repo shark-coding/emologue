@@ -94,12 +94,12 @@ public class UserEntity implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(userId, that.userId) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(name, that.name) && Objects.equals(job, that.job) && role == that.role && Objects.equals(createdDateTime, that.createdDateTime);
+        return Objects.equals(userId, that.userId) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(name, that.name) && role == that.role && Objects.equals(createdDateTime, that.createdDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, username, password, name, job, role, createdDateTime);
+        return Objects.hash(userId, username, password, name, role, createdDateTime);
     }
 
     @Override

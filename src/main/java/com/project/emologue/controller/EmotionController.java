@@ -1,7 +1,8 @@
 package com.project.emologue.controller;
 
 import com.project.emologue.model.emotion.Emotion;
-import com.project.emologue.model.emotion.EmotionRequestBody;
+import com.project.emologue.model.emotion.EmotionPatchRequestBody;
+import com.project.emologue.model.emotion.EmotionPostRequestBody;
 import com.project.emologue.service.EmotionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class EmotionController {
 
     @PostMapping
     public ResponseEntity<Emotion> createEmotion(
-            @Valid @RequestBody EmotionRequestBody createEmotion) {
+            @Valid @RequestBody EmotionPostRequestBody createEmotion) {
         Emotion emotion = emotionService.createEmotion(createEmotion);
         return ResponseEntity.ok(emotion);
     }
@@ -39,7 +40,7 @@ public class EmotionController {
     @PatchMapping("/{emotionId}")
     public ResponseEntity<Emotion> updateEmotion(
             @PathVariable long emotionId,
-            @Valid @RequestBody EmotionRequestBody updateEmotion) {
+            @Valid @RequestBody EmotionPatchRequestBody updateEmotion) {
         Emotion emotion = emotionService.updateEmotion(emotionId, updateEmotion);
         return ResponseEntity.ok(emotion);
     }

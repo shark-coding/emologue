@@ -3,7 +3,8 @@ package com.project.emologue.service;
 import com.project.emologue.exception.emotion.EmotionAlreadyExistsException;
 import com.project.emologue.exception.emotion.EmotionNotFoundException;
 import com.project.emologue.model.emotion.Emotion;
-import com.project.emologue.model.emotion.EmotionRequestBody;
+import com.project.emologue.model.emotion.EmotionPatchRequestBody;
+import com.project.emologue.model.emotion.EmotionPostRequestBody;
 import com.project.emologue.model.entity.EmotionEntity;
 import com.project.emologue.repository.EmotionEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class EmotionService {
     }
 
 
-    public Emotion createEmotion(EmotionRequestBody createEmotion) {
+    public Emotion createEmotion(EmotionPostRequestBody createEmotion) {
         emotionEntityRepository.findByName(createEmotion.name())
                 .ifPresent(
                         emotions -> {
@@ -54,7 +55,7 @@ public class EmotionService {
     }
 
 
-    public Emotion updateEmotion(Long emotionId, EmotionRequestBody updateEmotion) {
+    public Emotion updateEmotion(Long emotionId, EmotionPatchRequestBody updateEmotion) {
         EmotionEntity emotionEntity = getEmotionEntityByEmotionId(emotionId);
         if (!ObjectUtils.isEmpty(updateEmotion.name())) {
             if (getEmotionEntityByName(updateEmotion.name())) {
