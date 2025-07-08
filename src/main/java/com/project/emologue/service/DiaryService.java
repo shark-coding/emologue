@@ -6,29 +6,24 @@ import com.project.emologue.model.diary.Diary;
 import com.project.emologue.model.diary.DiaryEntityPatchRequestBody;
 import com.project.emologue.model.diary.DiaryEntityPostRequestBody;
 import com.project.emologue.model.diary.DiaryType;
-import com.project.emologue.model.entity.AdminEntity;
-import com.project.emologue.model.entity.DiaryEntity;
-import com.project.emologue.model.entity.QuestionAnswerEntity;
-import com.project.emologue.model.entity.UserEntity;
+import com.project.emologue.model.entity.*;
 import com.project.emologue.model.user.Role;
 import com.project.emologue.repository.DiaryEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DiaryService {
 
     @Autowired private DiaryEntityRepository diaryEntityRepository;
-    @Autowired private UserService userService;
-    @Autowired private EmotionService emotionService;
+//    @Autowired private UserService userService;
+//    @Autowired private EmotionService emotionService;
     @Autowired private QuestionAnswerService questionAnswerService;
-//    @Autowired private FreeDiaryContentService freeDiaryContentService;
+    @Autowired private FreeDiaryContentService freeDiaryContentService;
 
     public List<Diary> getAllDiaries() {
         return diaryEntityRepository.findAll().stream()
@@ -57,15 +52,14 @@ public class DiaryService {
             QuestionAnswerEntity answer =
                     questionAnswerService.createQuestionAnswer(requestBody);
             diaryEntity = DiaryEntity.ofQuestion(
-                    user
-                    , requestBody.type()
-                    , answer);
+                    user, requestBody.type(), answer);
         }
-//        else if {
-//            FreeDiaryContentEntity content =
-//            freeDiaryContentService.createFreeContent(requestBody.freeDiaryContent());
-//            diaryEntity = DiaryEntity.offree()
-//        }
+        else if (requestBody.type() == DiaryType.FREE) {
+            FreeDiaryContentEntity content =
+                    freeDiaryContentService.createFreeContent(requestBody);
+            diaryEntity = DiaryEntity.ofFree(
+                    user, requestBody.type(), content);
+        }
         else {
             throw new DiaryNotFoundException();
         }
@@ -85,11 +79,11 @@ public class DiaryService {
                     questionAnswerService.updateQuestionAnswer(diaryId, requestBody);
             diaryEntity.setQuestionAnswer(answer);
         }
-//        else if {
-//            FreeDiaryContentEntity content =
-//            freeDiaryContentService.createFreeContent(requestBody.freeDiaryContent());
-//            diaryEntity = DiaryEntity.offree()
-//        }
+        else if (requestBody.type() == DiaryType.FREE) {
+            FreeDiaryContentEntity content =
+                    freeDiaryContentService.updateQuestionAnswer(diaryId, requestBody);
+            diaryEntity.setFreeDiaryContent(content);
+        }
         else {
             throw new DiaryNotFoundException();
         }

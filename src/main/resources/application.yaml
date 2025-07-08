@@ -4,3 +4,7 @@ spring:
     user.password: emologue-admin-password
   config:
     import: optional:application-secret.yaml
+
+python:
+  dictionary-api-url: "http://localhost:5000/analyze"
+  predictor-api-url: "http://localhost:5000/predictor"

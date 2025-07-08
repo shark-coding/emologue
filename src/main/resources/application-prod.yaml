@@ -13,3 +13,7 @@ spring:
      url: jdbc:postgresql://localhost:15432/prod-emologue-db
      username: emologue-master
      password: emologue-postgres-password
+
+python:
+  dictionary-api-url: "http://localhost:5000/analyze"
+  predictor-api-url: "http://localhost:5000/predictor"

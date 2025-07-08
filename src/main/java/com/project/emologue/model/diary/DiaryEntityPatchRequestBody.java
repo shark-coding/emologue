@@ -2,14 +2,11 @@ package com.project.emologue.model.diary;
 
 import com.project.emologue.model.free.FreeDiaryContentPatchRequestBody;
 import com.project.emologue.model.question.QuestionAnswerPatchRequestBody;
-import com.project.emologue.model.user.User;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 public record DiaryEntityPatchRequestBody(
-        @NotNull DiaryType type,
+        DiaryType type,
         @Valid QuestionAnswerPatchRequestBody questionAnswer,
         @Valid FreeDiaryContentPatchRequestBody freeDiaryContent) {
 

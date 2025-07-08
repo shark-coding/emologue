@@ -5,6 +5,7 @@ import com.project.emologue.exception.emotion.EmotionNotFoundException;
 import com.project.emologue.model.emotion.Emotion;
 import com.project.emologue.model.emotion.EmotionPatchRequestBody;
 import com.project.emologue.model.emotion.EmotionPostRequestBody;
+import com.project.emologue.model.emotion.EmotionType;
 import com.project.emologue.model.entity.EmotionEntity;
 import com.project.emologue.repository.EmotionEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;

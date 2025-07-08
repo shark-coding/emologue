@@ -4,7 +4,6 @@ import com.project.emologue.exception.diary.DiaryNotFoundException;
 import com.project.emologue.exception.question.QuestionAnswerNotFoundException;
 import com.project.emologue.model.diary.DiaryEntityPatchRequestBody;
 import com.project.emologue.model.diary.DiaryEntityPostRequestBody;
-import com.project.emologue.model.entity.DiaryEntity;
 import com.project.emologue.model.entity.EmotionEntity;
 import com.project.emologue.model.entity.QuestionAnswerEntity;
 import com.project.emologue.model.question.QuestionAnswer;

@@ -106,14 +106,14 @@ public class DiaryEntity {
         return diary;
     }
 
-//    public static DiaryEntity ofFree(
-//            UserEntity user, DiaryType type, FreeDiaryContentEntity freeDiaryContentEntity) {
-//        DiaryEntity diary = new DiaryEntity();
-//        diary.setUser(user);
-//        diary.setType(type);
-//        diary.setFreeDiaryContent(freeDiaryContentEntity);
-//        freeDiaryContentEntity.setDiary(diary);
-//        return diary;
-//    }
+    public static DiaryEntity ofFree(
+            UserEntity user, DiaryType type, FreeDiaryContentEntity freeDiaryContentEntity) {
+        DiaryEntity diary = new DiaryEntity();
+        diary.setUser(user);
+        diary.setType(type);
+        diary.setFreeDiaryContent(freeDiaryContentEntity);
+        freeDiaryContentEntity.setDiary(diary);
+        return diary;
+    }
 
 }
