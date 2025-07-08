@@ -1,5 +1,6 @@
 package com.project.emologue.service;
 
+import com.project.emologue.exception.emotion.EmotionAlreadyExistsException;
 import com.project.emologue.exception.job.JobAlreadyExistsException;
 import com.project.emologue.exception.job.JobNotFoundException;
 import com.project.emologue.model.entity.JobEntity;
@@ -32,6 +33,11 @@ public class JobService {
                 .orElseThrow(() -> new JobNotFoundException(jobId));
     }
 
+    public JobEntity getJobEntityByJobName(String jobName) {
+        return jobEntityRepository.findByJobname(jobName)
+                .orElseThrow(() -> new JobAlreadyExistsException(jobName));
+    }
+
     public Job createJob(JobPostRequestBody createJob) {
         if (jobEntityRepository.existsByJobname(createJob.jobname())) {
             throw new JobAlreadyExistsException(createJob.jobname());
@@ -43,6 +49,7 @@ public class JobService {
     public Job updateJob(Long jobId, JobPatchRequestBody updateJob) {
         var jobEntity = getJobEntityByJobId(jobId);
         if (!ObjectUtils.isEmpty(updateJob.jobname())) {
+            getJobEntityByJobName(updateJob.jobname());
             jobEntity.setJobname(updateJob.jobname());
         }
         if (!ObjectUtils.isEmpty(updateJob.description())) {
