@@ -48,6 +48,7 @@ public class WebConfiguration {
                                 .requestMatchers(HttpMethod.GET, "/api/v1/diaries").authenticated()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/diaries/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/diaries/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/statistics/**").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/diaries/admin").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers(HttpMethod.POST,"/api/v1/jobs").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers(HttpMethod.PATCH, "/api/v1/jobs/**").hasAuthority("ROLE_ADMIN")
