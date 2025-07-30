@@ -24,4 +24,8 @@ public class EmotionStatisticsService {
     public List<EmotionStatisticsDto> getMonthlyStatistics(Long userId) {
         return statisticsRepository.getMonthlyEmotionStatistics(userId);
     }
+
+    public List<EmotionStatisticsDto> getJobsStatistics() {
+        return statisticsRepository.getJobsEmotionStatistics();
+    }
 }

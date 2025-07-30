@@ -32,4 +32,9 @@ public class EmotionStatisticsController {
     ) {
         return ResponseEntity.ok(emotionStatisticsService.getMonthlyStatistics(userId));
     }
+
+    @GetMapping("/jobs")
+    public ResponseEntity<List<EmotionStatisticsDto>> getJobsStatistics() {
+        return ResponseEntity.ok(emotionStatisticsService.getJobsStatistics());
+    }
 }

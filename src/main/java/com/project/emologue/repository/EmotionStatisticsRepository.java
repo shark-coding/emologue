@@ -6,4 +6,5 @@ import java.util.List;
 public interface EmotionStatisticsRepository {
     List<EmotionStatisticsDto> getWeeklyEmotionStatistics(Long userId);
     List<EmotionStatisticsDto> getMonthlyEmotionStatistics(Long userID);
+    List<EmotionStatisticsDto> getJobsEmotionStatistics();
 }
