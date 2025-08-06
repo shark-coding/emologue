@@ -3,7 +3,6 @@ package com.project.emologue.repository;
 import com.project.emologue.model.dto.EmotionStatisticsDto;
 import com.project.emologue.model.entity.*;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -161,7 +160,7 @@ public class EmotionStatisticsRepositoryImpl implements EmotionStatisticsReposit
             for (Map.Entry<String, Long> e : emotionCounts.entrySet()) {
                 String emotionType = e.getKey();
                 Long count = e.getValue();
-                double ratio = total > 0 ? (count * 100.0 / total) : 0.0;
+                double ratio = total > 0 ? Math.round(count * 10000.0 / total)/100.0 : 0.0;
 
                 result.add(new EmotionStatisticsDto(job, emotionType, count, ratio));
             }

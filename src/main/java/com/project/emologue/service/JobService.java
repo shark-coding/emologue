@@ -33,9 +33,8 @@ public class JobService {
                 .orElseThrow(() -> new JobNotFoundException(jobId));
     }
 
-    public JobEntity getJobEntityByJobName(String jobName) {
-        return jobEntityRepository.findByJobname(jobName)
-                .orElseThrow(() -> new JobAlreadyExistsException(jobName));
+    public boolean getJobEntityByJobName(String jobName) {
+        return jobEntityRepository.findByJobname(jobName).isPresent();
     }
 
     public Job createJob(JobPostRequestBody createJob) {
@@ -49,7 +48,10 @@ public class JobService {
     public Job updateJob(Long jobId, JobPatchRequestBody updateJob) {
         var jobEntity = getJobEntityByJobId(jobId);
         if (!ObjectUtils.isEmpty(updateJob.jobname())) {
-            getJobEntityByJobName(updateJob.jobname());
+            boolean exists = jobEntityRepository.existsByJobnameAndJobIdNot(updateJob.jobname(), jobId);
+            if (exists) {
+                throw new JobAlreadyExistsException(updateJob.jobname());
+            }
             jobEntity.setJobname(updateJob.jobname());
         }
         if (!ObjectUtils.isEmpty(updateJob.description())) {

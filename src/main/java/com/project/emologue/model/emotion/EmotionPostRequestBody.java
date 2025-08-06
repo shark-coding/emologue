@@ -1,11 +1,20 @@
 package com.project.emologue.model.emotion;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record EmotionPostRequestBody(
-        @NotEmpty  String name,
-        @NotNull @JsonProperty("emotionType") EmotionType emotionType,
-        @NotEmpty String description) {
+        @NotEmpty
+        @Schema(description = "감정 이름", example = "행복")
+        String name,
+
+        @NotNull @JsonProperty("emotionType")
+        @Schema(description = "감정 타입", example = "POSITIVE")
+        EmotionType emotionType,
+
+        @NotEmpty
+        @Schema(description = "감정 설명", example = "행복")
+        String description) {
 }

@@ -11,5 +11,5 @@ public interface JobEntityRepository extends JpaRepository<JobEntity, Long> {
     Optional<JobEntity> findByJobname(String jobname);
     Optional<JobEntity> findByJobId(Long jobId);
     boolean existsByJobname(String jobname);
-
+    boolean existsByJobnameAndJobIdNot(String jobname, Long jobId);
 }

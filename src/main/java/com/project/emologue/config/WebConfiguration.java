@@ -30,42 +30,67 @@ public class WebConfiguration {
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/v1/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
-                .authorizeHttpRequests(
-                        (requests) -> requests
-                                .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/*/users/authenticate",
-                                        "/api/v1/admin", "/api/*/admin/authenticate")
-                                .permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/v1/jobs", "/api/v1/jobs/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/emotions", "/api/v1/emotions/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/diaries").authenticated()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/diaries/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/diaries/**").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/statistics/**").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/statistics/jobs").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/v1/diaries/admin").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.POST,"/api/v1/jobs").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.PATCH, "/api/v1/jobs/**").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/jobs/**").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/v1/emotions").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.PATCH, "/api/v1/emotions/**").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/emotions/**").hasAuthority("ROLE_ADMIN")
-                                .anyRequest()
-                                .authenticated())
-                .sessionManagement(
-                        (session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .authorizeHttpRequests(requests -> requests
+                        // Swagger 허용
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/v3/api-docs",
+                                "/api-docs/**",
+                                "/api-docs",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // 회원가입/로그인 관련
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/users",
+                                "/api/v1/users/authenticate",
+                                "/api/v1/admin",
+                                "/api/v1/admin/authenticate"
+                        ).permitAll()
+
+                        // 공개 API
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/jobs/user",
+                                "/api/v1/jobs/user/**"
+                        ).permitAll()
+
+                        // 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/api/v1/diaries/user").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/diaries/user/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/diaries/user/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/user/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/emotions/user").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/emotions/user/**").authenticated()
+
+                        // 관리자 전용
+                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/admin/jobs").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/diaries/admin").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/jobs/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/jobs/admin/").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/jobs/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/jobs/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/emotions/admin/").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/emotions/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/emotions/admin/**").hasAuthority("ROLE_ADMIN")
+
+                        .anyRequest().authenticated()
                 )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(CsrfConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, jwtAuthenticationFilter.getClass())
                 .httpBasic(HttpBasicConfigurer::disable);
+
         return http.build();
     }
 }

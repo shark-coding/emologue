@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface EmotionEntityRepository extends JpaRepository<EmotionEntity, Long> {
     Optional<EmotionEntity> findByName(String name);
     Optional<EmotionEntity> findByEmotionId(Long emotionId);
+    boolean existsByNameAndEmotionIdNot(String name, Long emotionId);
 }

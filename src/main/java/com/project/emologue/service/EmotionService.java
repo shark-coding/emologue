@@ -59,7 +59,8 @@ public class EmotionService {
     public Emotion updateEmotion(Long emotionId, EmotionPatchRequestBody updateEmotion) {
         EmotionEntity emotionEntity = getEmotionEntityByEmotionId(emotionId);
         if (!ObjectUtils.isEmpty(updateEmotion.name())) {
-            if (getEmotionEntityByName(updateEmotion.name())) {
+            boolean exists = emotionEntityRepository.existsByNameAndEmotionIdNot(updateEmotion.name(), emotionId);
+            if (exists) {
                 throw new EmotionAlreadyExistsException();
             }
             emotionEntity.setName(updateEmotion.name());

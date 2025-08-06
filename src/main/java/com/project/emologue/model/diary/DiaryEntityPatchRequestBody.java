@@ -2,13 +2,22 @@ package com.project.emologue.model.diary;
 
 import com.project.emologue.model.free.FreeDiaryContentPatchRequestBody;
 import com.project.emologue.model.question.QuestionAnswerPatchRequestBody;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 
 public record DiaryEntityPatchRequestBody(
+
+        @Schema(description = "다이어리 타입", example = "QUESTION")
         DiaryType type,
-        @Valid QuestionAnswerPatchRequestBody questionAnswer,
-        @Valid FreeDiaryContentPatchRequestBody freeDiaryContent) {
+
+        @Valid
+        @Schema(description = "질문형 다이어리 응답")
+        QuestionAnswerPatchRequestBody questionAnswer,
+
+        @Valid
+        @Schema(description = "자유형 다이어리 응답", example = "null")
+        FreeDiaryContentPatchRequestBody freeDiaryContent) {
 
     public void validate() {
         if (type == DiaryType.QUESTION && questionAnswer == null) {
