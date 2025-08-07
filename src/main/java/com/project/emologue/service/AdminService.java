@@ -57,4 +57,8 @@ public class AdminService {
         return adminEntityRepository.findByUsername(username)
                 .orElseThrow(() -> new AdminNotFoundException(username));
     }
+
+    public boolean isUsernameDuplicate(String username) {
+        return adminEntityRepository.findByUsername(username).isPresent();
+    }
 }

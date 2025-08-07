@@ -61,7 +61,9 @@ public class WebConfiguration {
                         // 공개 API
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/jobs/user",
-                                "/api/v1/jobs/user/**"
+                                "/api/v1/jobs/user/**",
+                                "/api/v1/users/check-username",
+                                "/api/v1/admin/check-username"
                         ).permitAll()
 
                         // 인증 필요
@@ -82,6 +84,7 @@ public class WebConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/emotions/admin/").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/emotions/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/emotions/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/admin/users").hasAuthority("ROLE_ADMIN")
 
                         .anyRequest().authenticated()
                 )

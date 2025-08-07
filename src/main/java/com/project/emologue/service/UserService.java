@@ -22,6 +22,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService{
 
@@ -101,5 +104,14 @@ public class UserService{
         } else {
             throw new UserNotAuthenticationException("사용자 정보를 가져올 수 없습니다.");
         }
+    }
+
+    public boolean isUsernameDuplicate(String username) {
+        return userEntityRepository.findByUsername(username).isPresent();
+    }
+
+    public List<User> getAllUsers() {
+        List<UserEntity> userEntities = userEntityRepository.findAll();
+        return userEntities.stream().map(User::from).collect(Collectors.toList());
     }
 }

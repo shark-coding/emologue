@@ -5,9 +5,12 @@ import com.project.emologue.model.admin.AdminAuthenticationResponse;
 import com.project.emologue.model.admin.AdminLoginRequestBody;
 import com.project.emologue.model.admin.AdminSignUpRequestBody;
 import com.project.emologue.model.error.ErrorResponse;
+import com.project.emologue.model.user.User;
 import com.project.emologue.service.AdminService;
+import com.project.emologue.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,10 +20,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name="Admin API", description = "관리자 회원가입 및 로그인 관련 API")
 @RestController
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     @Autowired private AdminService adminService;
+    @Autowired private UserService userService;
 
     @PostMapping
     @Operation(summary = "관리자 회원가입", description = "관리자 계정 신규 등록")
@@ -86,5 +89,30 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/check-username")
+    @Operation(summary = "아이디 중복 확인", description = "아이디 중복 확인")
+    public ResponseEntity<Boolean> checkUsernameDuplicate(
+            @RequestParam String username) {
+        boolean exists = adminService.isUsernameDuplicate(username);
+        return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/users")
+    @Operation(summary = "사용자 전체 조회", description = "관리자의 사용자 전체 조회")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 전체 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = User.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content())
+    })
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
 
 }

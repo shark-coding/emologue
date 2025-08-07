@@ -17,10 +17,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "User API", description = "사용자 회원가입 및 로그인 관련 API")
 @RestController
@@ -84,6 +83,14 @@ public class UserController {
             @Valid @RequestBody UserLoginRequestBody userLoginRequestBody) {
         var response = userService.authenticate(userLoginRequestBody);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/check-username")
+    @Operation(summary = "아이디 중복 확인", description = "아이디 중복 확인")
+    public ResponseEntity<Boolean> checkUsernameDuplicate(
+            @RequestParam String username) {
+        boolean exists = userService.isUsernameDuplicate(username);
+        return ResponseEntity.ok(exists);
     }
 
 }

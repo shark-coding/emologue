@@ -48,8 +48,10 @@ public class DiaryController {
             ),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content())
     })
-    public ResponseEntity<List<Diary>> getAllDiaries() {
-        List<Diary> diaries = diaryService.getAllDiaries();
+    public ResponseEntity<List<Diary>> getAllDiaries(
+            @Parameter(description = "다이어리 타입(FREE/QUESTION)", example = "null")
+            @RequestParam(required = false) String type) {
+        List<Diary> diaries = diaryService.getAllDiaries(type);
         return ResponseEntity.ok(diaries);
     }
 
@@ -71,9 +73,11 @@ public class DiaryController {
                             examples = @ExampleObject(value = "{\"status\":\"UNAUTHORIZED\", \"message\":\"JWT expired 63144356 milliseconds ago at 2025-08-05T12:14:47.000Z. Current time: 2025-08-06T05:47:11.356Z. Allowed clock skew: 0 milliseconds.\"}")
                     ))
     })
-    public ResponseEntity<List<Diary>> getMyDiaries() {
+    public ResponseEntity<List<Diary>> getMyDiaries(
+            @Parameter(description = "다이어리 타입(FREE/QUESTION)", example = "null")
+            @RequestParam(required = false) String type) {
         UserEntity user = userService.getCurrentUser();
-        return ResponseEntity.ok(diaryService.getDiariesByUser(user));
+        return ResponseEntity.ok(diaryService.getDiariesByUser(user, type));
     }
 
     @PostMapping("/user")

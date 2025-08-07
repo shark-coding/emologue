@@ -25,15 +25,28 @@ public class DiaryService {
     @Autowired private QuestionAnswerService questionAnswerService;
     @Autowired private FreeDiaryContentService freeDiaryContentService;
 
-    public List<Diary> getAllDiaries() {
-        return diaryEntityRepository.findAll().stream()
-                .map(Diary::from).toList();
+    public List<Diary> getAllDiaries(String diaryType) {
+        List<DiaryEntity> diaryEntities;
+        if (diaryType == null) {
+            diaryEntities = diaryEntityRepository.findAll();
+        } else {
+            DiaryType type = DiaryType.from(diaryType);
+
+            diaryEntities = diaryEntityRepository.findAllByType(type);
+        }
+        return diaryEntities.stream().map(Diary::from).toList();
     }
 
 
-    public List<Diary> getDiariesByUser(UserEntity user) {
-        return diaryEntityRepository.findAllByUser(user).stream()
-                .map(Diary::from).toList();
+    public List<Diary> getDiariesByUser(UserEntity user, String diaryType) {
+        List<DiaryEntity> diaryEntities;
+        if (diaryType == null) {
+            diaryEntities = diaryEntityRepository.findAllByUser(user);
+        } else {
+            DiaryType type = DiaryType.from(diaryType);
+            diaryEntities = diaryEntityRepository.findAllByUserAndType(user, type);
+        }
+        return diaryEntities.stream().map(Diary::from).toList();
     }
 
     public DiaryEntity getDiaryEntityByDiaryId(Long diaryId) {
