@@ -1,5 +1,6 @@
 package com.project.emologue.service;
 
+import com.project.emologue.model.dto.DailyEmotionDto;
 import com.project.emologue.model.dto.EmotionStatisticsDto;
 import com.project.emologue.repository.EmotionStatisticsRepository;
 import org.slf4j.Logger;
@@ -27,5 +28,13 @@ public class EmotionStatisticsService {
 
     public List<EmotionStatisticsDto> getJobsStatistics() {
         return statisticsRepository.getJobsEmotionStatistics();
+    }
+
+    public List<DailyEmotionDto> getEmotionTrendMonthly(Long userId) {
+        return statisticsRepository.getEmotionTrendMonthly(userId);
+    }
+
+    public List<DailyEmotionDto> getEmotionTrendWeekly(Long userId) {
+        return statisticsRepository.getEmotionTrendWeekly(userId);
     }
 }

@@ -1,16 +1,16 @@
 package com.project.emologue.repository;
 
+import com.project.emologue.model.dto.DailyEmotionDto;
 import com.project.emologue.model.dto.EmotionStatisticsDto;
 import com.project.emologue.model.entity.*;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.DateTemplate;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -37,6 +37,18 @@ public class EmotionStatisticsRepositoryImpl implements EmotionStatisticsReposit
     @Override
     public List<EmotionStatisticsDto> getJobsEmotionStatistics() {
         return fetchEmotionStatusByJobs();
+    }
+
+    @Override
+    public List<DailyEmotionDto> getEmotionTrendMonthly(Long userId) {
+        LocalDate fromDate = LocalDate.now().minusMonths(1);
+        return fetchDailyEmotionTrend(userId, fromDate);
+    }
+
+    @Override
+    public List<DailyEmotionDto> getEmotionTrendWeekly(Long userId) {
+        LocalDate fromDate = LocalDate.now().minusWeeks(1);
+        return fetchDailyEmotionTrend(userId, fromDate);
     }
 
     private List<EmotionStatisticsDto> fetchEmotionStatus(Long userId, LocalDate fromDate) {
@@ -167,5 +179,103 @@ public class EmotionStatisticsRepositoryImpl implements EmotionStatisticsReposit
         }
 
         return result;
+    }
+
+    private List<DailyEmotionDto> fetchDailyEmotionTrend(Long userId, LocalDate fromDate) {
+        QDiaryEntity diary = QDiaryEntity.diaryEntity;
+        QFreeDiaryContentEntity free = QFreeDiaryContentEntity.freeDiaryContentEntity;
+        QQuestionAnswerEntity question = QQuestionAnswerEntity.questionAnswerEntity;
+        QAIPredictedEmotionEntity ai = QAIPredictedEmotionEntity.aIPredictedEmotionEntity;
+        QEmotionEntity emotion = QEmotionEntity.emotionEntity;
+
+        // DATE Template
+        DateTemplate<LocalDate> freeDateTemplate = Expressions.dateTemplate(
+                LocalDate.class,
+                "DATE({0})",
+                diary.createdDateTime
+        );
+
+        // freeDiary
+        List<Tuple> freeResults = queryFactory
+                .select(
+                        freeDateTemplate,
+                        ai.emotionType.stringValue(),
+                        ai.count()
+                )
+                .from(diary)
+                .leftJoin(diary.freeDiaryContent, free)
+                .leftJoin(free.aiPredictedEmotionEntity, ai)
+                .where(
+                        diary.user.userId.eq(userId),
+                        diary.createdDateTime.goe(fromDate),
+                        ai.emotionType.isNotNull()
+                )
+                .groupBy(freeDateTemplate, ai.emotionType)
+                .fetch();
+
+        // DATE Template
+        DateTemplate<LocalDate> questionDateTemplate = Expressions.dateTemplate(
+                LocalDate.class,
+                "DATE({0})",
+                diary.createdDateTime
+        );
+
+        // Question 감정
+        List<Tuple> questionResults = queryFactory
+                .select(
+                        questionDateTemplate,
+                        emotion.emotionType.stringValue(),
+                        emotion.count()
+                )
+                .from(diary)
+                .leftJoin(diary.questionAnswer, question)
+                .leftJoin(question.firstAnswer, emotion)
+                .where(
+                        diary.user.userId.eq(userId),
+                        diary.createdDateTime.goe(fromDate),
+                        emotion.emotionType.isNotNull()
+                )
+                .groupBy(questionDateTemplate, emotion.emotionType)
+                .fetch();
+
+        // 결과 합치기
+        Map<LocalDate, Map<String, Long>> dailyMap = new TreeMap<>(); // TreeMap: 날짜 순 정렬
+
+        List<Tuple> allResults = new ArrayList<>();
+        allResults.addAll(freeResults);
+        allResults.addAll(questionResults);
+
+        for (Tuple tuple : allResults) {
+
+            Object dateObj = tuple.get(0, Objects.class);
+
+            LocalDate date;
+            if (dateObj instanceof LocalDate) {
+                date = (LocalDate) dateObj;
+            } else if (dateObj instanceof java.sql.Date) {
+                date = ((java.sql.Date) dateObj).toLocalDate();
+            } else if (dateObj instanceof java.sql.Timestamp) {
+                date = ((java.sql.Timestamp) dateObj).toLocalDateTime().toLocalDate();
+            } else if (dateObj instanceof String) {
+                // 혹시 문자열이면 파싱 처리 (예: "2025-08-08")
+                date = LocalDate.parse((String) dateObj);
+            } else {
+                // 예상치 못한 타입
+                System.out.println("dateObj 타입 알 수 없음: " + dateObj.getClass());
+                continue;
+            }
+
+            String type = tuple.get(1, String.class);
+            Long count = tuple.get(2, Long.class);
+
+            dailyMap
+                    .computeIfAbsent(date, d -> new HashMap<>())
+                    .merge(type, count, Long::sum);
+
+        }
+
+        return dailyMap.entrySet().stream()
+                .map(entry -> new DailyEmotionDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }
